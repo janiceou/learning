@@ -100,5 +100,20 @@ summary(d$Purpose)
 table(d$Purpose, d$Good.Loan) #table uses the cross-classifying factors to build a contingency 
                               #table of the counts at each combination of factor levels.
 
+#play with example dataframe
+iris = as.data.frame(iris)
+summary(iris)
+
+#make names db safe: no "." or illegal characters,
+#all lower case & unique
+dbSafeNames = function(names){
+   names = gsub('[^a-z0-9]+','_',tolower(names))
+   names = make.names(names, unique = TRUE, allow_ = TRUE) 
+   names = gsub('.','_',names, fixed = TRUE)
+}
+colnames(iris) = dbSafeNames(colnames(iris))
+summary(iris)
+
+
 
 
