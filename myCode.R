@@ -114,6 +114,11 @@ dbSafeNames = function(names){
 colnames(iris) = dbSafeNames(colnames(iris))
 summary(iris)
 
+#WRONG custdata = read.csv("./Custdata/custdata.tsv")
+custdata <- read.table('./Custdata/custdata.tsv',header=TRUE,sep='\t')
+summary(custdata)
 
-
-
+library(ggplot2)
+#make a histogram of the population age
+#binwidth is the size of intervel in the x-axis
+ggplot(custdata) + geom_histogram(aes(x=age),binwidth = 5, fill = "gray")
