@@ -114,11 +114,52 @@ dbSafeNames = function(names){
 colnames(iris) = dbSafeNames(colnames(iris))
 summary(iris)
 
+#3.2 data vitualization
 #WRONG custdata = read.csv("./Custdata/custdata.tsv")
 custdata <- read.table('./Custdata/custdata.tsv',header=TRUE,sep='\t')
 summary(custdata)
 
 library(ggplot2)
-#make a histogram of the population age
-#binwidth is the size of intervel in the x-axis
-ggplot(custdata) + geom_histogram(aes(x=age),binwidth = 5, fill = "gray")
+#3.6 make a histogram of the population age
+#binwidth is the size of interval in the x-axis = 5 years
+#fill = "gray", the default colour is black
+ggplot(custdata) + geom_histogram(aes(x=age),binwidth = 5,fill = "gray")
+
+#3.7 make a density plot
+library(scales) #brings in the dollar scale notation
+ggplot(custdata) + geom_density(aes(x=income)) + scale_x_continuous(labels = dollar)
+
+#3.8 create a log-scaled density plot to see more details of the plot in 3.7
+#interpretation: most customers have income of 20 - 100,000, peak at 40,000$
+ggplot(custdata) + geom_density(aes(x=income)) +
+  scale_x_log10(breaks = c(100,1000,10000,100000),labels = dollar) + 
+  annotation_logticks(sides = "bt") #scales from 1 to 10 of the unit on the x-axis
+
+#3.9 bar chart = histogram of discrete variables
+#vertical bar chart
+ggplot(custdata) + geom_bar(aes(x = marital.stat),fill = "grey")
+
+#horizontal bar chart
+#by default, the categories are sorted in alphabetical #s
+ggplot(custdata) + 
+  geom_bar(aes(x=state.of.res),fill = "gray") + #plot: state.of.res on X-axis; count on Y-axis
+  coord_flip() + #flip the x & y axes
+  theme(axis.text.y=element_text(size=rel(0.8))) #reduce the size fo the y-axis tick labels to 80% of the default size for legibility
+
+#3.10
+#sorted barchart for better visualization
+statesums <- table(custdata$state.of.res) #this table give the name of the states + frequencies of appearence
+statef <- as.data.frame(statesums)
+#class(statef$state.of.res) -> factor
+colnames(statef) <- c("state.of.res","count") # rename the default names "var" & "freq" to be "state.of.state" & "count"
+summary(statef) #default order is alphabet
+#reorder the data.frame by counts
+statef <-transform(statef,state.of.res= reorder(state.of.res, count))
+summary(statef)
+
+#make a horizontal bar chart
+ggplot(statef) + geom_bar(aes(x=state.of.res,y=count), stat = "identity", fill = "gray") + 
+  #*stat = "identity" when the y-axis is a column; stat = "bin" when the y-axis is NOT a column
+  coord_flip() +
+  theme(axis.text.y=element_text(size=rel(0.8)))
+
