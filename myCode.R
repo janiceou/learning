@@ -93,6 +93,7 @@ for (i in 1:(dim(d))[2]){ #take the col number = 21 of df ==> in each column for
     d[,i] <- as.factor(as.character(mapping[d[,i]])) 
   }
 }
+#CHAPTER 3=========================================================================================================
 
 #use the factor variable for viewing via levels
 print(d[1:3,"Purpose"]) #see the purposes of the first three loan
@@ -222,6 +223,31 @@ ggplot(custdata2) + geom_bar(aes(x=housing.type, fill = marital.stat), position 
 ggplot(custdata2) + geom_bar(aes(x=marital.stat), position="dodge", fill = "darkgray") +
   facet_wrap(~housing.type, scales='free_y') +  #each y-axis has different scales in each group
   theme(axis.text.x=element_text(angle = 45, hjust=1))
+
+#CHAPTER 4 managing data===========================================================================
+
+#4.1 chekcing the locations of missing data
+summary(custdata[is.na(custdata$housing.type), c("recent.move", "num.vehicles")])
+custdata$is.employed.fix <- ifelse(is.na(custdata$is.employed))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
