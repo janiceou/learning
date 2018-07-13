@@ -163,3 +163,65 @@ ggplot(statef) + geom_bar(aes(x=state.of.res,y=count), stat = "identity", fill =
   coord_flip() +
   theme(axis.text.y=element_text(size=rel(0.8)))
 
+#3.11 producing a line plot
+x <- runif(100) # x = data uniformly distributed between 0 - 1
+y<-x^2 + 0.2*x #y is a quadratic function of x
+ggplot(data.frame(x=x, y=y), aes(x=x, y=y)) + geom_line() #plot the line
+
+#3.12 examing the correlation be age and income
+custdata2 <- subset(custdata, (custdata$age >0 & custdata$age <100 & custdata$income >0))
+cor(custdata2$age, custdata2$income)
+
+  #make a scatter plot about $age vs $income + a smooth line
+ggplot(custdata2, aes(x=age, y=income)) + geom_point() + 
+  stat_smooth(method='lm') + #make a straight line to depict the relationship bw the 2 variables
+  ylim(0,200000)
+    #analysis: on the left side of the graph, income increase as age inc; right side: income decrease as age inc
+
+  #plotting a smoothing curve through the data instead of a curve
+ggplot(custdata2, aes(x=age, y=income)) + geom_point() + 
+  stat_smooth() + #make a smooth line(curve) to depict the relationship bw the 2 variables
+  ylim(0,200000)
+
+#3.13 plot age and health insurance status
+ggplot(custdata2, aes(x=age, y=as.numeric(health.ins))) +  # "y=as.numeric(health.ins)" converts boolean into numbers  of 1/0
+  geom_point(position=position_jitter(w=0.05, h=0.05)) + # add random noise to a plot -> easier to read, avoid overplotting
+  geom_smooth()
+
+  #make a hexbin plot
+install.packages("hexbin")
+library(hexbin)
+ggplot(custdata2, aes(x=age, y=income)) + 
+  geom_hex(binwidth=c(5, 10000)) + #create hexbin with age binned into 5-year increments, income increments of 10,000$
+  geom_smooth(color="white", se=F) +
+  ylim(0, 200000)
+
+#3.15 barchart for categorical variables x3 , specifying different styles of bar chart
+  #1 stacked bar chart:
+ggplot(custdata) + geom_bar(aes(x=marital.stat, fill = health.ins)) 
+  #2 side-by-side bar chart: 
+    #harder to compare abs values of customers in each categories, 
+    #but easier to compare insured/uninsured across categories
+ggplot(custdata) + geom_bar(aes(x=marital.stat, fill=health.ins),position="dodge")
+  #3 filled bar chart: better for comparison of ratios in each categories, 
+    #each bar represents the population of the category normalized to 1
+ggplot(custdata) + geom_bar(aes(x=marital.stat, fill=health.ins), position="fill")
+
+#3.16 plotting data with a rug
+ggplot(custdata, aes(x=marital.stat)) +
+  geom_bar(aes(fill=health.ins),position="fill")+
+  geom_point(aes(y=-0.05), size = 0.75, alpha = 0.3,
+             position = position_jitter(h=0.01))
+
+  #1 side-by-side bar chart
+ggplot(custdata2) + geom_bar(aes(x=housing.type, fill = marital.stat), position = "dodge") +
+  #coord_flip()+ : flip the x and y aces
+  theme(axis.text.x=element_text(angle=45,hjust=1))
+
+  #2 faceted bar chart by housing types to split the graphs based on housing types
+ggplot(custdata2) + geom_bar(aes(x=marital.stat), position="dodge", fill = "darkgray") +
+  facet_wrap(~housing.type, scales='free_y') +  #each y-axis has different scales in each group
+  theme(axis.text.x=element_text(angle = 45, hjust=1))
+
+
+
