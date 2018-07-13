@@ -227,11 +227,23 @@ ggplot(custdata2) + geom_bar(aes(x=marital.stat), position="dodge", fill = "dark
 #CHAPTER 4 managing data===========================================================================
 
 #4.1 chekcing the locations of missing data
+
+#1)missing data in categorical variables
 summary(custdata[is.na(custdata$housing.type), c("recent.move", "num.vehicles")])
-custdata$is.employed.fix <- ifelse(is.na(custdata$is.employed))
+custdata$is.employed.fix <- ifelse(is.na(custdata$is.employed),"missing",#if T, assign the "missing" to this category
+                                   ifelse(custdata$is.employed==T, "employed","not employed")) 
+                                    #if is.employed == T, then assign "employed"; 
+                                    #if is.employed == F, assign "not employed".
+summary(as.factor(custdata$is.employed.fix)) #turn the assigned info from string back to factor
+#instead of assigning them into "missing data", it is more appropriate to mean "not in active workforce"
+#use a new variable to store the assigned information
+custdata$is.employed.fix <- ifelse(is.na(custdata$is.employed),"not in active workforce",#if T, assign the "missing" to this category
+                                   ifelse(custdata$is.employed==T, "employed","not employed")) 
 
-
-
+#2)missing values in numeric data
+summary(custdata$income)
+#2.1)when values are missing randomly
+meanIncome <- mean(custdata$income, na.rm=t)
 
 
 
