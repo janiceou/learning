@@ -237,17 +237,30 @@ custdata$is.employed.fix <- ifelse(is.na(custdata$is.employed),"missing",#if T, 
 summary(as.factor(custdata$is.employed.fix)) #turn the assigned info from string back to factor
 #instead of assigning them into "missing data", it is more appropriate to mean "not in active workforce"
 #use a new variable to store the assigned information
+#the ifelse(boolean,T-do this, F-do this)
 custdata$is.employed.fix <- ifelse(is.na(custdata$is.employed),"not in active workforce",#if T, assign the "missing" to this category
                                    ifelse(custdata$is.employed==T, "employed","not employed")) 
 
 #2)missing values in numeric data
 summary(custdata$income)
 #2.1)when values are missing randomly
-meanIncome <- mean(custdata$income, na.rm=t)
+meanIncome <- mean(custdata$income, na.rm = T)
+Income.fix <- ifelse(custdata$income < 0, meanIncome, custdata$income) #replace the negative value to a meanIncome
+summary(Income.fix) #the min is non-negative anymore
 
+#2.2)when the are missing systematically
+breaks <- c(0, 10000, 50000, 100000, 250000, 1000000)
+Income.groups <- cut(custdata$income, breaks = breaks, include.lowest = T) 
+#by default, the $0 wont be included into the categories
+#the last boolean = T -> gets the $0 into the categories
 
-
-
+#use the cut() function to produce factor vairables to categorize the income groups. NAs are preserved 
+summary(Income.groups)
+Income.groups <- as.character(Income.groups)
+Income.groups <- ifelse(is.na(Income.groups),"no income", Income.groups) #put the "NA" into "no income" group
+summary(as.factor(Income.groups))
+missingIncome <- is.na(custdata$income)
+Income.fix <- ifelse(is.na(custdata$income), 0, custdata$income) #replace the "NA" with 0
 
 
 
