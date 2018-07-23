@@ -262,17 +262,51 @@ summary(as.factor(Income.groups))
 missingIncome <- is.na(custdata$income)
 Income.fix <- ifelse(is.na(custdata$income), 0, custdata$income) #replace the "NA" with 0
 
+#4.1.2 Data transformations
+medianincome <- aggregate(income~state.of.res,custdata,FUN=median)
+head(medianincome)
+colnames(medianincome) <- c('State','Median.Income')
+summary(medianincome)
 
+#merge median income info into the custdata df 
+#by matching the col-custdata$state.of.res to the col-medianincome$$State
+custdata <- merge(custdata, medianincome, by.x="state.of.res", by.y = "State") 
+summary(custdata[,c("state.of.res", "income", "Median.Income")])
 
+#normalize income by "Median.Income"
+custdata$income.norm <- with(custdata, income/Median.Income)
+summary(custdata$income.norm)
+custdata$income.lt.20K <- custdata$income < 20000
+summary(custdata$income.lt.20K)
 
+#convert age into ranges cut()
 
+#select the age ranges of interest. 
+#The upper and lower bounds should encompass the full range of the data
+brks <- c(0, 25, 65, Inf) 
 
+#"include.lowest = T" make sure that the 0 age data is included in the lowest age range categories
+# it is excluded by default
+custdata$age.range <- cut(custdata$age,breaks = brks, include.lowest = T)
+summary(custdata$age.range) #factor output
 
+#normalize to the mean age
+summary(custdata$age)
+meanage <- mean(custdata$age)
+custdata$age.normalized <- custdata$age/meanage
+summary(custdata$age.normalized)
+meanage <- mean(custdata$age)
+stdage <- sd(custdata$age) #take the standard deviation
+meanage
+stdage
 
-
-
-
-
+#use the mean value as the origin/reference point ->
+#rescale the distance from the mean by the standard deviation
+custdata$age.normalized <- (custdata$age - meanage)/stdage
+summary(custdata$age.normalized)
+signedlog10 = function(x) {
+  ifelse(abs(x) <= 1, 0, sign(x)*log10(abs(x)))
+}
 
 
 
