@@ -308,5 +308,20 @@ signedlog10 = function(x) {
   ifelse(abs(x) <= 1, 0, sign(x)*log10(abs(x)))
 }
 
+#4.2 Sampling for modeling and validation
+#4.2.2 creating a sample group column-splitting into test and training using a random group mark
+custdata$gp <- runif(dim(custdata)[1]) #runif(1000) to make 1000 random and uniformly distributed nums to the df
+testSet <- subset(custdata, custdata$gp <= 0.1) #test set if about 10% of the the data
+trainingSet <- subset(custdata, custdata$gp > 0.1) #training uses about 90% of the data
+dim(testSet)[1]
+dim(trainingSet)[1]
 
+#4.2.3  record grouping
+
+# hh <- unique(hhdata$household_id) #get all unique household IDs from your df
+# households <-data.frame(household_id = hh, gp = runif(length(hh))) #create a temporary df of household IDs and a uniformly random #s from 0 to 1
+# hhdata <- merge(hhdata,households, by = "household_id") #merge new random ssample group column back into original data frame
+
+#4.2.4 data provenance
+#END OF Chpt #4
 
